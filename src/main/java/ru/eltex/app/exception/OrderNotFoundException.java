@@ -14,4 +14,9 @@ public class OrderNotFoundException extends RuntimeException {
     public String toString() {
         return errorMessage;
     }
+
+    @Override
+    public String getMessage() {
+        return "error: OrderNotFound";
+    }
 }

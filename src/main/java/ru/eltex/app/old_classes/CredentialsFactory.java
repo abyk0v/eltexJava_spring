@@ -1,6 +1,9 @@
 package ru.eltex.app.old_classes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import ru.eltex.app.CommandController;
 
 import java.util.Random;
 
@@ -12,24 +15,7 @@ import java.util.Random;
 @Component
 public class CredentialsFactory {
 
-    // TODO Если мы используем spring нужно ли писать ЭТО: ??
-//    private static volatile CredentialsFactory instance;
-//    private CredentialsFactory(){
-//        id = 1;
-//    }
-//
-//    public static CredentialsFactory getInstance() {
-//        CredentialsFactory localInstance = instance;
-//        if (localInstance == null) {
-//            synchronized (DeviceFactory.class) {
-//                localInstance = instance;
-//                if (localInstance == null) {
-//                    instance = localInstance = new CredentialsFactory();
-//                }
-//            }
-//        }
-//        return localInstance;
-//    }
+    final static Logger logger = LogManager.getLogger(CredentialsFactory.class);
 
     private static int id;
 
@@ -40,12 +26,14 @@ public class CredentialsFactory {
     private Random random = new Random();
 
     public Credentials getCredentials() {
-        return new Credentials(
-                id,
-                arrayName[ random.nextInt(arrayName.length) ],
-                arraySurname[ random.nextInt(arraySurname.length) ],
-                arrayPatronymic[ random.nextInt(arrayPatronymic.length) ],
-                arrayEmail[ random.nextInt(arrayEmail.length) ]
-        );
+        Credentials tmp = new Credentials(
+                                            id,
+                                            arrayName[ random.nextInt(arrayName.length) ],
+                                            arraySurname[ random.nextInt(arraySurname.length) ],
+                                            arrayPatronymic[ random.nextInt(arrayPatronymic.length) ],
+                                            arrayEmail[ random.nextInt(arrayEmail.length) ]
+                                         );
+        logger.info("New credentials: id="+tmp.getId()+", name="+tmp.getName()+", email="+tmp.getEmail());
+        return tmp;
     }
 }

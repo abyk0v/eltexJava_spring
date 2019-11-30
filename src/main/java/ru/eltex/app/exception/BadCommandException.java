@@ -14,4 +14,9 @@ public class BadCommandException extends RuntimeException {
     public String toString() {
         return errorMessage;
     }
+
+    @Override
+    public String getMessage() {
+        return "error: BadCommand";
+    }
 }

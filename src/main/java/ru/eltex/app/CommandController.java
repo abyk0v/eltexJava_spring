@@ -1,5 +1,7 @@
 package ru.eltex.app;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,8 @@ public class CommandController {
     private Orders orders;
     private DeviceFactory deviceFactory;
 
+    final static Logger logger = LogManager.getLogger(CommandController.class);
+
     @Autowired
     public CommandController(Orders orders, DeviceFactory deviceFactory) {
         this.orders = orders;
@@ -27,20 +31,25 @@ public class CommandController {
                           @RequestParam(value="card_id", required=false, defaultValue="-1") int card_id) {
 
         try {
-            if (command.equals("readall"))
+            if (command.equals("readall")) {
+                logger.info("Command: readall");
+
                 return "{" +
                         "orders=" + orders.toString() +
                         "}";
+            }
 
             if (command.equals("readById")) {
                 if ( order_id == -1 )
                     throw new BadCommandException();
+                logger.info("Command: readById; card_id: " + order_id);
                 return orders.getById(order_id).toString();
             }
 
             if (command.equals("addToCard")) {
                 if ( card_id == -1 )
                     throw new BadCommandException();
+                logger.info("Command: addToCard; card_id: " + card_id);
                 Order tmp = orders.getById(card_id);
                 if (tmp == null) {
                     orders.addById(card_id);
@@ -52,6 +61,7 @@ public class CommandController {
             }
 
             if (command.equals("delById")) {
+                logger.info("Command: delById; order_id: " + order_id);
                 orders.delById(order_id);
                 return "0";
             }
@@ -59,9 +69,11 @@ public class CommandController {
             throw new BadCommandException();
         }
         catch (BadCommandException e) {
+            logger.error(e.getMessage());
             return e.toString();
         }
         catch (OrderNotFoundException e) {
+            logger.error(e.getMessage());
             return e.toString();
         }
 
